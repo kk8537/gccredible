@@ -1,0 +1,163 @@
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<body style="background-color:powderblue;">
+------
+<center> <h1 style="color:red;">Assignment on Credible Interval</h1> </center>
+<center> <h2 style="color:blue;"><a href="https://kk8537.github.io/" target="">Kaushik Khatua</a></h2> </center>
+<center> <h3>24 March 2022</h3> </center>
+<center> <h3><i>Prof. Gaurangadeb Chattopadhyay</i></h3> </center>
+<hr>
+------
+Take number of samples from prior distribution is 100000
+
+```{r}
+N=100000
+```
+
+Now in the Prior distribution choose hyper parameters.
+```{r}
+alpha=3
+beta=2
+```
+We choose one theta `r N` times.
+Then one sample is drawn from binomial(n, theta) distribution for each theta
+Take, n=5.
+```{r}
+n=5
+```
+
+Now find the samples 
+```{r}
+theta_i<-rep()  # variable contains samples from prior distribution
+x_i<-rep()  # variable contains samples from P(x|theta_i) for each theta_i
+
+for (i in 1:N) {
+  theta_i[i]<-round(rbeta(1,3,2),2)
+  x_i[i]<-round(rbinom(1,n,theta_i[i]))
+  
+}
+```
+
+Check out first few theta and corresponding samples from binomial (5, theta)
+```{r}
+head(cbind(theta_i,x_i))
+```
+<hr><hr><hr>
+</br></br></br>
+<center> <b><h2 style="color:red;"><u>Credible Interval</u></h2></b> </center>
+
+We will observe the Posterior distribution given some specific x value.
+</br>
+
+Let we will find Credible Interval for theta when sample value 2. Call it as x_star.
+```{r}
+x_star<-2
+k=0 #variable which count number of samples where x_i is 2.
+t=0  #variable which count number of samples theta_i lies between credible interval for x=2,
+```
+
+Note that N is too large. We shall take the Credible Interval as mean+- sigma,
+where mean and sigma are mean and Standard deviation of Posterior Distribution.
+```{r}
+
+l_x<-((x_star+alpha)/(n+alpha+beta))-1.96*(sqrt(((x_star+alpha)*(n-x_star+beta))/
+                                                  (((n+alpha+beta)^2)*(n+alpha+beta+1))))
+
+l_x   #Lower credible Interval                                          
+u_x<-((x_star+alpha)/(n+alpha+beta))+1.96*(sqrt(((x_star+alpha)*(n-x_star+beta))/
+                                                  (((n+alpha+beta)^2)*(n+alpha+beta+1))))
+u_x  #Upper credible Interval
+```
+Credible interval for theta when x(=2) is (`r l_x`, `r u_x`).
+Now we will verify whether credible interval contains thetas with probability more than 0.95
+```{r}
+for (i in 1:N) {
+  if(x_i[i]==2){
+    k=k+1
+    if(theta_i[i]<u_x && theta_i[i]>l_x){
+      t=t+1
+    }
+  }
+}
+
+prob<-t/k
+prob
+```
+
+<hr>
+<center> <b><h3 style="color:red;">Summary</h3></b> </center>
+
+<b>Hence, Credible interval for theta is (`r l_x`, `r u_x`).
+We also verified this as Credible interval contains theta with Probabilities `r prob`, which is more than 0.95</b>.
+
+#--------
+<hr><hr><hr></br></br></br>
+<center> <b><h2 style="color:red;"><u>Confidence Interval</u></h2></b> </center>
+
+
+
+For Confidence interval of Bin(5, theta).
+</br>
+we take the samples where sample mean is 0.68 
+```{r}
+theta_star<- 0.68
+k1=0  #variable which count number of samples where theta_i=theta_star=0.68
+t1=0  #variable which count number of samples where x_i is within confidence interval
+```
+
+Now we find confidence interval for mean.
+```{r}
+l1_x<-theta_star-1.96*sqrt((theta_star*(1-theta_star))/n)
+l1_x    #Lower Confidence interval                                       
+u1_x<-theta_star+1.96*sqrt((theta_star*(1-theta_star))/n)
+u1_x  #Upper Confidence interval
+```
+So, the confidence interval for mean is (`r l1_x`, `r u1_x`)
+</br></br>
+
+Now we will verify whether Probability that sample mean lies between Confidence interval is greater than 0.95.
+
+```{r}  
+for (i in 1:N) {
+  if(theta_i[i]==0.68){
+    k1=k1+1
+    if(x_i[i]/n<u1_x && x_i[i]/n>l1_x){
+      t1=t1+1
+    }
+  }
+}
+
+
+prob_con<-t1/k1
+prob_con
+```
+
+
+<hr>
+<center> <b><h3 style="color:red;">Summary</h3></b> </center>
+
+<b>Hence, Confidence interval is (`r l1_x`, `r u1_x`).
+
+Hence we see that the Sample mean lies between Confidence interval with Probabilty `r prob_con` which is greater than 0.95. 
+
+
+<hr><hr>
+
+
+
+
+
+
+
+
+</br></br></br></br></br></br></br></br></br>
+<center><i>
+For any feedback:
+<a href=" https://wa.me/919051685415?text=Feedbacks regarding assignment on Credible Interval" target="_blank"><img src="https://img.icons8.com/color/2x/whatsapp--v6.gif" 
+	alt="IMAGE ALT TEXT HERE" width="45" height="50" border="2" /></a>        <a href="mailto:khatua.kaushik99@gmail.com
+	" target="_blank"><img src="https://img.icons8.com/color/2x/gmail--v2.gif" 
+	alt="IMAGE ALT TEXT HERE" width="45" height="50" border="2" /></a></i></center> 
+	
+</body>
